@@ -1,0 +1,12 @@
+html, body {
+    padding: 0px;
+}
+
+#content {
+    overflow: hidden;
+}
+
+.strip_img {
+    float: left;
+    position: relative;
+}
