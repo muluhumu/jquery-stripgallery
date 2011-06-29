@@ -4,36 +4,52 @@
         return this.each(function(){
             var $this = $(this);
 
-            var $imgs = $('.strip_img > img', $this);
-            var imgcount = $imgs.length;
-            var imgwidth = $imgs.width();
-            var imgheight = $imgs.height();
+            var imgs = $(opts.imgclass + ' > img', $this);
+            var imgcount = imgs.length;
+            var imgwidth = imgs.width();
+            var imgheight = imgs.height();
 
             $this.width(imgwidth * (imgcount + 1));
 
-            start($this);
+            $this.hover(function(){
+                $this.pause();
+            },
+            function(){
+                $this.resume();
+            });
+
+            start($this, opts);
         })
     }
 
     $.fn.stripgallery.defaults = {
-        duration: 1000
+        duration: 2000,
+        imgclass: '.strip_img'
     };
 
-    function start($gallery) {
-        var first = $('.strip_img', $gallery).eq(0).clone();
-        $gallery.append(first);
+    function start(gallery, opts) {
+        var strip_imgs = $(opts.imgclass, gallery);
+        var first = strip_imgs.eq(0).clone();
+        gallery.append(first);
 
-        $gallery.animate({
-            marginLeft: '-=400'
+        var margin = gallery.css('margin-left').replace('px','');
+        var speed = 400*5 + margin*5;
+
+        gallery.animate({
+            marginLeft: -400
         },
         {
-            duration: 7000,
+            duration: speed,
             easing: 'linear',
             complete: function() {
-                $gallery.css('margin-left', 0);
-                $('.strip_img', $gallery).eq(0).remove();
-                $gallery.queue(start($gallery));
+                phase2(gallery, strip_imgs, opts);
             }
         });
+    }
+
+    function phase2(gallery, strip_imgs, opts){
+        gallery.css('margin-left', 0);
+        strip_imgs.eq(0).remove();
+        gallery.queue(start(gallery, opts));
     }
 })(jQuery);
